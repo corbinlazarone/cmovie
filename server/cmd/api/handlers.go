@@ -5,14 +5,14 @@ import (
 	"net/http"
 )
 
-func health(w http.ResponseWriter, r *http.Request) {
+func (app *application) health(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "cmovie server is running!")
 }
 
-func AllReviews() {
+func (app *application) AllReviews() {
 
 }
 
-func SingleReview() {
+func (app *application) SingleReview() {
 
 }

@@ -14,7 +14,7 @@ type Review struct {
 }
 
 // NOTE: will wrap a db command so we can communicate with the db table
-// type ReviewModel struct {
-// }
+type ReviewModel struct {
+}
 
 // NOTE: crud operations will be here

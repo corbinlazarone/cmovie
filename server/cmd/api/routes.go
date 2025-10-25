@@ -7,9 +7,9 @@ import (
 	"github.com/justinas/alice"
 )
 
-func routes() http.Handler {
+func (app *application) routes() http.Handler {
 	router := httprouter.New()
-	router.Handler(http.MethodGet, "/", http.HandlerFunc(health))
+	router.Handler(http.MethodGet, "/", http.HandlerFunc(app.health))
 
 	std := alice.New(secureHeaders)
 

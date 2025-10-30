@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/corbinlazarone/cmovie/cmd/internals/models"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type application struct {
@@ -15,15 +17,22 @@ type application struct {
 func main() {
 
 	// db url is auto injected by docker-compose
-	url := os.Getenv("DB_CONN")
-	if url == "" {
+	dbUrl := os.Getenv("DB_CONN")
+	if dbUrl == "" {
 		log.Fatal("DB_CONN env var not set")
 	}
+
+	dbPool, err := initDB(dbUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer dbPool.Close()
 
 	// so we can share our CRUD operations across our app
 	app := &application{
 		reviews: &models.ReviewModel{
-			// TODO: db connection goes here
+			DB: dbPool,
 		},
 	}
 
@@ -33,8 +42,24 @@ func main() {
 	}
 
 	log.Println("Server running on port 4000...")
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func initDB(dataSource string) (*pgxpool.Pool, error) {
+	ctx := context.Background()
+	conn, err := pgxpool.New(ctx, dataSource)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// pinging the connection to see if it was successful
+	if err = conn.Ping(ctx); err != nil {
+		return nil, err
+	}
+
+	return conn, nil
 }

@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
 
 type Review struct {
 	ID        int       `json:"id"`
@@ -13,8 +17,6 @@ type Review struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// NOTE: will wrap a db command so we can communicate with the db table
 type ReviewModel struct {
+	DB *pgxpool.Pool
 }
-
-// NOTE: crud operations will be here

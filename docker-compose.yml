@@ -1,4 +1,13 @@
 services:
+  web-client: 
+    container_name: cmovie-web-client
+    build:
+      context: ./web-client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
   server:
     container_name: cmovie-server
     build:
@@ -11,6 +20,7 @@ services:
     depends_on:
       - db
     restart: unless-stopped
+
   db:
     image: postgres:16-alpine  # smaller image
     env_file:

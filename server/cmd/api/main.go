@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/corbinlazarone/cmovie/cmd/internals/models"
 )
@@ -12,6 +13,12 @@ type application struct {
 }
 
 func main() {
+
+	// db url is auto injected by docker-compose
+	url := os.Getenv("DB_CONN")
+	if url == "" {
+		log.Fatal("DB_CONN env var not set")
+	}
 
 	// so we can share our CRUD operations across our app
 	app := &application{

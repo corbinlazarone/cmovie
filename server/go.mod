@@ -1,6 +1,6 @@
 module github.com/corbinlazarone/cmovie
 
-go 1.25.1
+go 1.23.12
 
 require (
 	github.com/julienschmidt/httprouter v1.3.0

@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/corbinlazarone/cmovie/cmd/internals/migrations"
 	"github.com/corbinlazarone/cmovie/cmd/internals/models"
 	"github.com/jackc/pgx/v5/pgxpool"
+	_ "github.com/jackc/pgx/v5/stdlib" // to load the pgx driver for database/sql
 )
 
 type application struct {
@@ -28,6 +31,18 @@ func main() {
 	}
 
 	defer dbPool.Close()
+
+	// create sql db connection for goose migrations
+	sqlDB, err := sql.Open("pgx", dbUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer sqlDB.Close()
+
+	err = migrations.RunMigrations(sqlDB)
+	if err != nil {
+		log.Fatal("Failed to load migrations", err)
+	}
 
 	// so we can share our CRUD operations across our app
 	app := &application{
